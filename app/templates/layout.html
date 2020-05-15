@@ -34,14 +34,21 @@
         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item active">
-        <a class="nav-link" href="api/cities">Cities API JSON endpoint <span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="/data/homes">Homes Data <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="api/homes">Homes API JSON endpoint <span class="sr-only">(current)</span></a>
       </li>
 
     </ul>
   </div>
 </nav>
-<main role="main" class="container">{% block content %}{% endblock %}</main>
-    <div id="footer">
+<main role="main" class="container">
+
+    {% block content %}
+    {% endblock %}
+</main>
+<div id="footer">
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
@@ -53,6 +60,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
-    </div>
+</div>
 </body>
 </html>
