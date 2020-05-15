@@ -12,7 +12,7 @@ app.config['MYSQL_DATABASE_HOST'] = 'db'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_PORT'] = 3306
-app.config['MYSQL_DATABASE_DB'] = 'HomesDatSet'
+app.config['MYSQL_DATABASE_DB'] = 'homesData'
 mysql.init_app(app)
 
 
@@ -20,7 +20,7 @@ mysql.init_app(app)
 def index():
     user = {'username': 'Stats'}
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 ORDER BY name')
+    cursor.execute('SELECT * FROM homesData ORDER BY name')
     result = cursor.fetchall()
     return render_template('index.html', title='Home', user=user, stats=result)
 
@@ -28,7 +28,7 @@ def index():
 @app.route('/view/<int:home_id>', methods=['GET'])
 def record_view(home_id):
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 WHERE id=%s', home_id)
+    cursor.execute('SELECT * FROM homesData WHERE id=%s', home_id)
     result = cursor.fetchall()
     return render_template('view.html', title='View Form', bio=result[0])
 
@@ -36,7 +36,7 @@ def record_view(home_id):
 @app.route('/edit/<int:home_id>', methods=['GET'])
 def form_edit_get(home_id):
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 WHERE id=%s', home_id)
+    cursor.execute('SELECT * FROM homesData WHERE id=%s', home_id)
     result = cursor.fetchall()
     return render_template('edit.html', title='Edit Stats', bio=result[0])
 
@@ -47,7 +47,7 @@ def form_update_post(home_id):
     inputData = (request.form.get('sell'), request.form.get('list'), request.form.get('living'),
                  request.form.get('rooms'), request.form.get('beds'), request.form.get('baths'),
                  request.form.get('age'), request.form.get('acres'),request.form.get('taxes'), home_id)
-    sql_update_query = """UPDATE Homes_DataSet_Sheet1 t SET t.sell = %s, t.list = %s, t.living = %s, t.rooms = 
+    sql_update_query = """UPDATE homesData t SET t.sell = %s, t.list = %s, t.living = %s, t.rooms = 
     %s, t.beds = %s,  t.baths = %s,  t.age = %s,  t.acres = %s,  t.taxes = %s WHERE t.id = %s """
     cursor.execute(sql_update_query, inputData)
     mysql.get_db().commit()
@@ -65,7 +65,7 @@ def form_insert_post():
     inputData = (request.form.get('sell'), request.form.get('list'), request.form.get('living'),
                  request.form.get('rooms'), request.form.get('beds'), request.form.get('baths'),
                  request.form.get('age'),request.form.get('acres'),request.form.get('taxes'))
-    sql_insert_query = """INSERT INTO Homes_DataSet_Sheet1 (sell,list,living,rooms,beds,baths,age,acres,taxes) 
+    sql_insert_query = """INSERT INTO homesData (sell,list,living,rooms,beds,baths,age,acres,taxes) 
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) """
     cursor.execute(sql_insert_query, inputData)
     mysql.get_db().commit()
@@ -75,7 +75,7 @@ def form_insert_post():
 @app.route('/delete/<int:home_id>', methods=['POST'])
 def form_delete_post(home_id):
     cursor = mysql.get_db().cursor()
-    sql_delete_query = """DELETE FROM Homes_DataSet_Sheet1 WHERE id = %s """
+    sql_delete_query = """DELETE FROM homesData WHERE id = %s """
     cursor.execute(sql_delete_query, home_id)
     mysql.get_db().commit()
     return redirect("/", code=302)
@@ -84,7 +84,7 @@ def form_delete_post(home_id):
 @app.route('/api/v1/stats', methods=['GET'])
 def api_browse() -> str:
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1')
+    cursor.execute('SELECT * FROM homesData')
     result = cursor.fetchall()
     json_result = json.dumps(result)
     resp = Response(json_result, status=200, mimetype='application/json')
@@ -94,7 +94,7 @@ def api_browse() -> str:
 @app.route('/api/v1/stats/<int:home_id>', methods=['GET'])
 def api_retrieve(home_id) -> str:
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 WHERE id=%s', home_id)
+    cursor.execute('SELECT * FROM homesData WHERE id=%s', home_id)
     result = cursor.fetchall()
     json_result = json.dumps(result)
     resp = Response(json_result, status=200, mimetype='application/json')
@@ -107,7 +107,7 @@ def api_add() -> str:
     cursor = mysql.get_db().cursor()
     inputData = (content['sell'], content['list'], content['living'], content['rooms'], content['beds'],
                  content['baths'],content['age'],content['acres'],content['taxes'])
-    sql_insert_query = """INSERT INTO Homes_DataSet_Sheet1 (sell,list,living,rooms,beds,baths,age,acres,taxes) 
+    sql_insert_query = """INSERT INTO homesData (sell,list,living,rooms,beds,baths,age,acres,taxes) 
     VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) """
     cursor.execute(sql_insert_query, inputData)
     mysql.get_db().commit()
@@ -121,7 +121,7 @@ def api_edit(home_id) -> str:
     content = request.json
     inputData = (content['sell'], content['list'], content['living'], content['rooms'], content['beds'],
                  content['baths'],content['age'],content['acres'],content['taxes'], home_id)
-    sql_update_query = """UPDATE Homes_DataSet_Sheet1 t SET t.sell = %s, t.list = %s, t.living = %s, t.rooms = 
+    sql_update_query = """UPDATE homesData t SET t.sell = %s, t.list = %s, t.living = %s, t.rooms = 
     %s, t.beds = %s, t.baths = %s, t.age = %s, t.acres = %s, t.taxes = %s WHERE t.id = %s """
     cursor.execute(sql_update_query, inputData)
     mysql.get_db().commit()
@@ -132,7 +132,7 @@ def api_edit(home_id) -> str:
 @app.route('/api/v1/stats/<int:home_id>', methods=['DELETE'])
 def api_delete(home_id) -> str:
     cursor = mysql.get_db().cursor()
-    sql_delete_query = """DELETE FROM Homes_DataSet_Sheet1 WHERE id = %s """
+    sql_delete_query = """DELETE FROM homesData WHERE id = %s """
     cursor.execute(sql_delete_query, bio_id)
     mysql.get_db().commit()
     resp = Response(status=200, mimetype='application/json')

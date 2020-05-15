@@ -1,7 +1,7 @@
-CREATE DATABASE HomesDataSet;
-use HomesDataSet;
+CREATE DATABASE homesData;
+use homesData;
 
-CREATE TABLE IF NOT EXISTS Homes_DataSet_Sheet1 (
+CREATE TABLE IF NOT EXISTS homesData (
     `Sell` INT,
     `List` INT,
     `Living` INT,
@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS Homes_DataSet_Sheet1 (
     `Acres` NUMERIC(3, 2),
     `Taxes` INT
 );
-INSERT INTO Homes_DataSet_Sheet1 VALUES
+INSERT INTO homesData (Sell, List, Living, Rooms, Beds, Baths, Age, Acres, Taxes) VALUES
     (142,160,28,10,5,3,60,0.28,3167),
     (175,180,18,8,4,1,12,0.43,4033),
     (129,132,13,6,3,1,41,0.33,1471),
