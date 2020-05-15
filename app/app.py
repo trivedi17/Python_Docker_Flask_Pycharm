@@ -12,109 +12,131 @@ app.config['MYSQL_DATABASE_HOST'] = 'db'
 app.config['MYSQL_DATABASE_USER'] = 'root'
 app.config['MYSQL_DATABASE_PASSWORD'] = 'root'
 app.config['MYSQL_DATABASE_PORT'] = 3306
-app.config['MYSQL_DATABASE_DB'] = 'citiesData'
+app.config['MYSQL_DATABASE_DB'] = 'HomesDatSet'
 mysql.init_app(app)
 
 
 @app.route('/', methods=['GET'])
 def index():
-    user = {'username': 'Cities Project'}
+    user = {'username': 'Stats'}
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM tblCitiesImport')
+    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 ORDER BY name')
     result = cursor.fetchall()
-    return render_template('index.html', title='Home', user=user, cities=result)
+    return render_template('index.html', title='Home', user=user, stats=result)
 
 
-@app.route('/view/<int:city_id>', methods=['GET'])
-def record_view(city_id):
+@app.route('/view/<int:home_id>', methods=['GET'])
+def record_view(home_id):
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM tblCitiesImport WHERE id=%s', city_id)
+    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 WHERE id=%s', home_id)
     result = cursor.fetchall()
-    return render_template('view.html', title='View Form', city=result[0])
+    return render_template('view.html', title='View Form', bio=result[0])
 
 
-@app.route('/edit/<int:city_id>', methods=['GET'])
-def form_edit_get(city_id):
+@app.route('/edit/<int:home_id>', methods=['GET'])
+def form_edit_get(home_id):
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM tblCitiesImport WHERE id=%s', city_id)
+    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 WHERE id=%s', home_id)
     result = cursor.fetchall()
-    return render_template('edit.html', title='Edit Form', city=result[0])
+    return render_template('edit.html', title='Edit Stats', bio=result[0])
 
 
-@app.route('/edit/<int:city_id>', methods=['POST'])
-def form_update_post(city_id):
+@app.route('/edit/<int:home_id>', methods=['POST'])
+def form_update_post(home_id):
     cursor = mysql.get_db().cursor()
-    inputData = (request.form.get('fldName'), request.form.get('fldLat'), request.form.get('fldLong'),
-                 request.form.get('fldCountry'), request.form.get('fldAbbreviation'),
-                 request.form.get('fldCapitalStatus'), request.form.get('fldPopulation'), city_id)
-    sql_update_query = """UPDATE tblCitiesImport t SET t.fldName = %s, t.fldLat = %s, t.fldLong = %s, t.fldCountry = 
-    %s, t.fldAbbreviation = %s, t.fldCapitalStatus = %s, t.fldPopulation = %s WHERE t.id = %s """
+    inputData = (request.form.get('sell'), request.form.get('list'), request.form.get('living'),
+                 request.form.get('rooms'), request.form.get('beds'), request.form.get('baths'),
+                 request.form.get('age'), request.form.get('acres'),request.form.get('taxes'), home_id)
+    sql_update_query = """UPDATE Homes_DataSet_Sheet1 t SET t.sell = %s, t.list = %s, t.living = %s, t.rooms = 
+    %s, t.beds = %s,  t.baths = %s,  t.age = %s,  t.acres = %s,  t.taxes = %s WHERE t.id = %s """
     cursor.execute(sql_update_query, inputData)
     mysql.get_db().commit()
     return redirect("/", code=302)
 
-@app.route('/cities/new', methods=['GET'])
+
+@app.route('/homes/new', methods=['GET'])
 def form_insert_get():
-    return render_template('new.html', title='New City Form')
+    return render_template('new.html', title='New Homes Form')
 
 
-@app.route('/cities/new', methods=['POST'])
+@app.route('/homes/new', methods=['POST'])
 def form_insert_post():
     cursor = mysql.get_db().cursor()
-    inputData = (request.form.get('fldName'), request.form.get('fldLat'), request.form.get('fldLong'),
-                 request.form.get('fldCountry'), request.form.get('fldAbbreviation'),
-                 request.form.get('fldCapitalStatus'), request.form.get('fldPopulation'))
-    sql_insert_query = """INSERT INTO tblCitiesImport (fldName,fldLat,fldLong,fldCountry,fldAbbreviation,fldCapitalStatus,fldPopulation) VALUES (%s, %s,%s, %s,%s, %s,%s) """
+    inputData = (request.form.get('sell'), request.form.get('list'), request.form.get('living'),
+                 request.form.get('rooms'), request.form.get('beds'), request.form.get('baths'),
+                 request.form.get('age'),request.form.get('acres'),request.form.get('taxes'))
+    sql_insert_query = """INSERT INTO Homes_DataSet_Sheet1 (sell,list,living,rooms,beds,baths,age,acres,taxes) 
+    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) """
     cursor.execute(sql_insert_query, inputData)
     mysql.get_db().commit()
     return redirect("/", code=302)
 
-@app.route('/delete/<int:city_id>', methods=['POST'])
-def form_delete_post(city_id):
+
+@app.route('/delete/<int:home_id>', methods=['POST'])
+def form_delete_post(home_id):
     cursor = mysql.get_db().cursor()
-    sql_delete_query = """DELETE FROM tblCitiesImport WHERE id = %s """
-    cursor.execute(sql_delete_query, city_id)
+    sql_delete_query = """DELETE FROM Homes_DataSet_Sheet1 WHERE id = %s """
+    cursor.execute(sql_delete_query, home_id)
     mysql.get_db().commit()
     return redirect("/", code=302)
 
 
-@app.route('/api/v1/cities', methods=['GET'])
+@app.route('/api/v1/stats', methods=['GET'])
 def api_browse() -> str:
     cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM tblCitiesImport')
-    result = cursor.fetchall()
-    json_result = json.dumps(result);
-    resp = Response(json_result, status=200, mimetype='application/json')
-    return resp
-
-
-@app.route('/api/v1/cities/<int:city_id>', methods=['GET'])
-def api_retrieve(city_id) -> str:
-    cursor = mysql.get_db().cursor()
-    cursor.execute('SELECT * FROM tblCitiesImport WHERE id=%s', city_id)
+    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1')
     result = cursor.fetchall()
     json_result = json.dumps(result)
     resp = Response(json_result, status=200, mimetype='application/json')
     return resp
 
 
-@app.route('/api/v1/cities/', methods=['POST'])
+@app.route('/api/v1/stats/<int:home_id>', methods=['GET'])
+def api_retrieve(home_id) -> str:
+    cursor = mysql.get_db().cursor()
+    cursor.execute('SELECT * FROM Homes_DataSet_Sheet1 WHERE id=%s', home_id)
+    result = cursor.fetchall()
+    json_result = json.dumps(result)
+    resp = Response(json_result, status=200, mimetype='application/json')
+    return resp
+
+
+@app.route('/api/v1/stats', methods=['POST'])
 def api_add() -> str:
+    content = request.json
+    cursor = mysql.get_db().cursor()
+    inputData = (content['sell'], content['list'], content['living'], content['rooms'], content['beds'],
+                 content['baths'],content['age'],content['acres'],content['taxes'])
+    sql_insert_query = """INSERT INTO Homes_DataSet_Sheet1 (sell,list,living,rooms,beds,baths,age,acres,taxes) 
+    VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s) """
+    cursor.execute(sql_insert_query, inputData)
+    mysql.get_db().commit()
     resp = Response(status=201, mimetype='application/json')
     return resp
 
 
-@app.route('/api/v1/cities/<int:city_id>', methods=['PUT'])
-def api_edit(city_id) -> str:
-    resp = Response(status=201, mimetype='application/json')
+@app.route('/api/v1/stats/<int:home_id>', methods=['PUT'])
+def api_edit(home_id) -> str:
+    cursor = mysql.get_db().cursor()
+    content = request.json
+    inputData = (content['sell'], content['list'], content['living'], content['rooms'], content['beds'],
+                 content['baths'],content['age'],content['acres'],content['taxes'], home_id)
+    sql_update_query = """UPDATE Homes_DataSet_Sheet1 t SET t.sell = %s, t.list = %s, t.living = %s, t.rooms = 
+    %s, t.beds = %s, t.baths = %s, t.age = %s, t.acres = %s, t.taxes = %s WHERE t.id = %s """
+    cursor.execute(sql_update_query, inputData)
+    mysql.get_db().commit()
+    resp = Response(status=200, mimetype='application/json')
     return resp
 
 
-@app.route('/api/cities/<int:city_id>', methods=['DELETE'])
-def api_delete(city_id) -> str:
-    resp = Response(status=210, mimetype='application/json')
+@app.route('/api/v1/stats/<int:home_id>', methods=['DELETE'])
+def api_delete(home_id) -> str:
+    cursor = mysql.get_db().cursor()
+    sql_delete_query = """DELETE FROM Homes_DataSet_Sheet1 WHERE id = %s """
+    cursor.execute(sql_delete_query, bio_id)
+    mysql.get_db().commit()
+    resp = Response(status=200, mimetype='application/json')
     return resp
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
