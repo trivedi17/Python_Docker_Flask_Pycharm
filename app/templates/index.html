@@ -15,11 +15,12 @@
     <tbody>
     {% for city in cities %}
     <tr>
-        <td><a href="view/{{city.id}}">{{ city.fldName }}</a></td>
+    <!--    <td>{{ city.fldName }}</td>  -->
+        <td><a href="/view/{{city.fldName}}">{{ city.fldName }}</a></td>
         <td>{{ city.fldLat }}</td>
         <td>{{ city.fldLong }}</td>
         <td>{{ city.fldCountry }}</td>
-        <td>{{ city.fldAbbreviation }}</td>
+        <td>{{ city.fldAbreviation }}</td>
         <td>{{ city.fldCapitalStatus }}</td>
         <td>{{ city.fldPopulation }}</td>
     </tr>
