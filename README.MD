@@ -8,4 +8,4 @@ This project is a homework assignment to teach how to get Pycharm setup with Doc
 ![postmanrequestoutput2](screenshots/postman2.png)
 
 # Final Project Part 1 Screenshots
-1[citiesdatatable](screenshots/CitiesDataTable.png)
+![citiesdatatable](screenshots/CitiesDataTable.png)
